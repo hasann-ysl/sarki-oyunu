@@ -71,21 +71,17 @@
         lblSonuc.innerText = "Şarkı aranıyor, lütfen bekleyin...";
 
         const accessToken = "VrKPqdQOKWiXlcusImFSQJazx7UznsHewuVM0CkGk6zY4mzn8TCuUZCSeLszGndr";
-        const geniusUrl = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}`;
+        const geniusUrl = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}&access_token=${accessToken}`;
         
-        // Tarayıcı CORS engelini aşmak için proxy adresi
-        const url = `https://corsproxy.io/?${encodeURIComponent(geniusUrl)}`;
+        // Zaman aşımına uğramayan kesintisiz Proxy adresi
+        const url = `https://api.allorigins.win/get?url=${encodeURIComponent(geniusUrl)}`;
 
         try {
-            const response = await fetch(url, {
-                headers: {
-                    "Authorization": "Bearer " + accessToken
-                }
-            });
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Arama servisine ulaşılamadı");
 
-            if (!response.ok) throw new Error("API yanıt vermedi");
-
-            const data = await response.json();
+            const outerData = await response.json();
+            const data = JSON.parse(outerData.contents);
             const hits = data.response?.hits;
 
             if (hits && hits.length > 0) {
