@@ -70,7 +70,7 @@
         lblSonuc.innerText = "Şarkı aranıyor, lütfen bekleyin...";
 
         const accessToken = "VrKPqdQOKWiXlcusImFSQJazx7UznsHewuVM0CkGk6zY4mzn8TCuUZCSeLszGndr";
-        const url = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}`;
+        const url = `https://corsproxy.io/?${encodeURIComponent('https://api.genius.com/search?q=' + encodeURIComponent(arananMetin))}`;
 
         try {
             const response = await fetch(url, {
