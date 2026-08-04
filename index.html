@@ -32,7 +32,6 @@
 </div>
 
 <script>
-    // 120 Öğelik Tam Şarkı Kelimeleri Kütüphanesi
     const kelimeListesi = [
         "Aşk", "Yâr", "Gönül", "Sevda", "Yürek", "Gözler", "Ten", "Ruh", "Koyun", "Dudak",
         "Kucak", "Nefes", "Eller", "Can", "Yüz", "Ses", "Tenha", "Yabancı", "Beden", "Gözyaşı",
@@ -71,17 +70,19 @@
         lblSonuc.innerText = "Şarkı aranıyor, lütfen bekleyin...";
 
         const accessToken = "VrKPqdQOKWiXlcusImFSQJazx7UznsHewuVM0CkGk6zY4mzn8TCuUZCSeLszGndr";
-        const geniusUrl = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}&access_token=${accessToken}`;
-        
-        // Zaman aşımına uğramayan kesintisiz Proxy adresi
-        const url = `https://api.allorigins.win/get?url=${encodeURIComponent(geniusUrl)}`;
+        const url = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}`;
 
         try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Arama servisine ulaşılamadı");
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            });
 
-            const outerData = await response.json();
-            const data = JSON.parse(outerData.contents);
+            if (!response.ok) throw new Error("API isteği başarısız oldu");
+
+            const data = await response.json();
             const hits = data.response?.hits;
 
             if (hits && hits.length > 0) {
