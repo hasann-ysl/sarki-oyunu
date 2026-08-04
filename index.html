@@ -34,29 +34,18 @@
 <script>
     // 120 Öğelik Tam Şarkı Kelimeleri Kütüphanesi
     const kelimeListesi = [
-        // İnsan, Beden & İki Kişilik Dünya
         "Aşk", "Yâr", "Gönül", "Sevda", "Yürek", "Gözler", "Ten", "Ruh", "Koyun", "Dudak",
         "Kucak", "Nefes", "Eller", "Can", "Yüz", "Ses", "Tenha", "Yabancı", "Beden", "Gözyaşı",
-        
-        // Eylem & Hareket (Beste Kurduran Fiiller)
         "Gitmek", "Gelmek", "Dönmek", "Yanmak", "Unutmak", "Korkmak", "Kaçmak", "Ağlamak", "Aratmak", "Gülmek",
         "Ölmek", "Öpmek", "Sarmak", "Kalmak", "Görmek", "Susmak", "Yıkmak", "Söz vermek", "Kandırmak", "Kavuşmak",
         "Uzanmak", "Özlemek", "Kaybolmak", "Tutunmak", "Tükenmek",
-        
-        // Zaman, Mekan & Atmosfer
         "Gece", "Yol", "Sokak", "Gündüz", "Şehir", "Sabah", "Dünya", "Yarın", "Dün", "Oda",
         "Karanlık", "Işık", "Mesafe", "Duvar", "Köşe", "Taraf", "Liman", "Durak", "Sonbahar", "Yaz",
-        
-        // Duygu Durumları, İmgeler & Çatışmalar
         "Yalan", "Deli", "Yalnızlık", "Ateş", "Kader", "Rüya", "Gülümseme", "Masal", "Huzur", "Apayrı",
         "Zehir", "Tuzak", "Ayna", "Oyun", "Günah", "Cehennem", "Cennet", "Bela", "Izah", "Özgürlük",
         "Ceza", "Şans", "Taraf", "Umut", "Pişmanlık",
-        
-        // Doğa Unsurları & Elementler
         "Rüzgar", "Yağmur", "Deniz", "Güneş", "Bulut", "Alev", "Fırtına", "Gök", "Kül", "Koy",
         "Duman", "Damlalar", "Dalga", "Su", "Kar",
-        
-        // Ritim ve Nakarat Kalıpları (İkileme & Phrasal)
         "Alev alev", "Yalan dolan", "Adım adım", "Usul usul", "Bata çıka", "Göz göre göre", "Dile kolay", "Yana yana",
         "Döne döne", "Kendi kendine", "Sora sora", "Gece gündüz", "Pür dikkat", "Son defa", "Bir ihtimal"
     ];
@@ -82,15 +71,21 @@
         lblSonuc.innerText = "Şarkı aranıyor, lütfen bekleyin...";
 
         const accessToken = "VrKPqdQOKWiXlcusImFSQJazx7UznsHewuVM0CkGk6zY4mzn8TCuUZCSeLszGndr";
-        const targetUrl = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}`;
-        const url = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+        const geniusUrl = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}`;
+        
+        // Tarayıcı CORS engelini aşmak için proxy adresi
+        const url = `https://corsproxy.io/?${encodeURIComponent(geniusUrl)}`;
 
         try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("İstek başarısız");
+            const response = await fetch(url, {
+                headers: {
+                    "Authorization": "Bearer " + accessToken
+                }
+            });
 
-            const outerData = await response.json();
-            const data = JSON.parse(outerData.contents);
+            if (!response.ok) throw new Error("API yanıt vermedi");
+
+            const data = await response.json();
             const hits = data.response?.hits;
 
             if (hits && hits.length > 0) {
