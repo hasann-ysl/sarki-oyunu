@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şarkı Kelime Oyunu</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #121212; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background-color: #1e1e1e; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        h1 { color: #1db954; font-size: 1.8rem; margin-bottom: 20px; }
+        .word-display { font-size: 1.2rem; font-weight: bold; background: #2a2a2a; color: #f1c40f; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        input[type="text"] { width: 90%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: #fff; margin-bottom: 15px; font-size: 1rem; text-align: center; }
+        button { background-color: #1db954; color: white; border: none; padding: 12px 20px; font-size: 1rem; border-radius: 6px; cursor: pointer; margin: 5px; font-weight: bold; width: 95%; }
+        button:hover { background-color: #1ed760; }
+        .result-box { margin-top: 20px; padding: 15px; border-radius: 8px; background: #2a2a2a; min-height: 50px; white-space: pre-line; color: #ddd; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🎵 Şarkı Oyunu</h1>
+    
+    <div id="lblKelime" class="word-display">Kütüphane Yükleniyor...</div>
+    <button onclick="kelimeGetir()">Rastgele Kelime Getir</button>
+
+    <hr style="border-color: #333; margin: 20px 0;">
+
+    <input type="text" id="txtKullaniciCumlesi" placeholder="Şarkı sözünü veya cümleyi girin...">
+    <button onclick="sarkiAra()">Şarkı Ara</button>
+
+    <div id="lblSonuc" class="result-box">Sonuçlar burada görünecek.</div>
+</div>
+
+<script>
+    // 120 Öğelik Tam Şarkı Kelimeleri Kütüphanesi
+    const kelimeListesi = [
+        // İnsan, Beden & İki Kişilik Dünya
+        "Aşk", "Yâr", "Gönül", "Sevda", "Yürek", "Gözler", "Ten", "Ruh", "Koyun", "Dudak",
+        "Kucak", "Nefes", "Eller", "Can", "Yüz", "Ses", "Tenha", "Yabancı", "Beden", "Gözyaşı",
+        
+        // Eylem & Hareket (Beste Kurduran Fiiller)
+        "Gitmek", "Gelmek", "Dönmek", "Yanmak", "Unutmak", "Korkmak", "Kaçmak", "Ağlamak", "Aratmak", "Gülmek",
+        "Ölmek", "Öpmek", "Sarmak", "Kalmak", "Görmek", "Susmak", "Yıkmak", "Söz vermek", "Kandırmak", "Kavuşmak",
+        "Uzanmak", "Özlemek", "Kaybolmak", "Tutunmak", "Tükenmek",
+        
+        // Zaman, Mekan & Atmosfer
+        "Gece", "Yol", "Sokak", "Gündüz", "Şehir", "Sabah", "Dünya", "Yarın", "Dün", "Oda",
+        "Karanlık", "Işık", "Mesafe", "Duvar", "Köşe", "Taraf", "Liman", "Durak", "Sonbahar", "Yaz",
+        
+        // Duygu Durumları, İmgeler & Çatışmalar
+        "Yalan", "Deli", "Yalnızlık", "Ateş", "Kader", "Rüya", "Gülümseme", "Masal", "Huzur", "Apayrı",
+        "Zehir", "Tuzak", "Ayna", "Oyun", "Günah", "Cehennem", "Cennet", "Bela", "Izah", "Özgürlük",
+        "Ceza", "Şans", "Taraf", "Umut", "Pişmanlık",
+        
+        // Doğa Unsurları & Elementler
+        "Rüzgar", "Yağmur", "Deniz", "Güneş", "Bulut", "Alev", "Fırtına", "Gök", "Kül", "Koy",
+        "Duman", "Damlalar", "Dalga", "Su", "Kar",
+        
+        // Ritim ve Nakarat Kalıpları (İkileme & Phrasal)
+        "Alev alev", "Yalan dolan", "Adım adım", "Usul usul", "Bata çıka", "Göz göre göre", "Dile kolay", "Yana yana",
+        "Döne döne", "Kendi kendine", "Sora sora", "Gece gündüz", "Pür dikkat", "Son defa", "Bir ihtimal"
+    ];
+
+    window.onload = function() {
+        document.getElementById("lblKelime").innerText = `Kütüphane Hazır! (${kelimeListesi.length} Şarkı Kelimesi)`;
+    };
+
+    function kelimeGetir() {
+        const randomIndex = Math.floor(Math.random() * kelimeListesi.length);
+        document.getElementById("lblKelime").innerText = "Kelime: " + kelimeListesi[randomIndex].toUpperCase();
+    }
+
+    async function sarkiAra() {
+        const arananMetin = document.getElementById("txtKullaniciCumlesi").value.trim();
+        const lblSonuc = document.getElementById("lblSonuc");
+
+        if (!arananMetin) {
+            alert("Lütfen bir şarkı sözü veya cümle girin!");
+            return;
+        }
+
+        lblSonuc.innerText = "Şarkı aranıyor, lütfen bekleyin...";
+
+        const accessToken = "VrKPqdQOKWiXlcusImFSQJazx7UznsHewuVM0CkGk6zY4mzn8TCuUZCSeLszGndr";
+        const targetUrl = `https://api.genius.com/search?q=${encodeURIComponent(arananMetin)}`;
+        const url = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("İstek başarısız");
+
+            const outerData = await response.json();
+            const data = JSON.parse(outerData.contents);
+            const hits = data.response?.hits;
+
+            if (hits && hits.length > 0) {
+                let uygunSarkiBulundu = false;
+                const arananKelimeler = arananMetin.toLowerCase().split(' ');
+
+                for (let hit of hits) {
+                    const sarkiAdi = hit.result?.title || "";
+                    const sanatciAdi = hit.result?.primary_artist?.name || "";
+                    const tamBaslik = hit.result?.full_title || "";
+
+                    let kelimeEslesti = false;
+                    for (let kelime of arananKelimeler) {
+                        if (kelime.length > 2 && (tamBaslik.toLowerCase().includes(kelime) || sarkiAdi.toLowerCase().includes(kelime))) {
+                            kelimeEslesti = true;
+                            break;
+                        }
+                    }
+
+                    if (kelimeEslesti) {
+                        lblSonuc.innerText = `🎤 Bulunan Şarkı:\nSanatçı: ${sanatciAdi}\nŞarkı: ${sarkiAdi}`;
+                        uygunSarkiBulundu = true;
+                        break;
+                    }
+                }
+
+                if (!uygunSarkiBulundu) {
+                    const sarkiAdi = hits[0].result.title;
+                    const sanatciAdi = hits[0].result.primary_artist.name;
+                    lblSonuc.innerText = `🔍 En Yakın Tahmin:\nSanatçı: ${sanatciAdi}\nŞarkı: ${sarkiAdi}`;
+                }
+            } else {
+                lblSonuc.innerText = "❌ Bu cümleyi içeren bir şarkı bulunamadı!";
+            }
+        } catch (ex) {
+            lblSonuc.innerText = "Arama hatası: " + ex.message;
+        }
+    }
+</script>
+
+</body>
+</html>
